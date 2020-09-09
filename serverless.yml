@@ -1,0 +1,36 @@
+service: serverless-security
+frameworkVersion: '1'
+
+provider:
+  name: aws
+  runtime: python3.8
+  environment:
+    DOMAIN_SUFFIX: rainbow-unicorn-fppzs
+  httpApi:
+    authorizers:
+      serviceAuthorizer:
+        identitySource: $request.header.Authorization
+        issuerUrl: 
+          Fn::Join:
+          - ''
+          - - 'https://cognito-idp.'
+            - '${opt:region, self:provider.region}'
+            - '.amazonaws.com/'
+            - Ref: serviceUserPool
+        audience:
+          - Ref: serviceUserPoolClient
+
+functions:
+  hello:
+    handler: handler.hello
+    events:
+      - httpApi:
+            method: GET
+            path: /test
+            authorizer: serviceAuthorizer
+
+resources:
+  - ${file(resources/cognito.yml)}
+  - Resources:
+      HttpApi:
+        DependsOn: ${file(resources/cognito.yml):serviceUserPool}
