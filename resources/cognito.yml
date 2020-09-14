@@ -23,7 +23,7 @@ Resources:
       UserPoolId:
         Ref: serviceUserPool
       CallbackURLs: 
-        - https://localhost:3000
+        - ${self:provider.environment.CALLBACK_URL}
       ExplicitAuthFlows:
         - ALLOW_USER_SRP_AUTH
         - ALLOW_REFRESH_TOKEN_AUTH

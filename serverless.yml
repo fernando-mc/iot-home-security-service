@@ -6,6 +6,26 @@ provider:
   runtime: python3.8
   environment:
     DOMAIN_SUFFIX: rainbow-unicorn-fppzs
+    CALLBACK_URL: https://localhost:3000
+    DYNAMODB_TABLE: rainbow-unicorn-fppzs
+    CA_CERT_ID: 2e49fc99eb0c4872e61f658745f93db5ef7403d076b32e57534d036e05bdecde
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - iot:UpdateCertificate
+        - iot:CreatePolicy
+        - iot:AttachPrincipalPolicy
+      Resource: "*"
+    - Effect: Allow
+      Action:
+        - dynamodb:Scan
+        - dynamodb:Query
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:GetItem
+      Resource: 
+        - "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
+        - "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}/index/sk-pk-index"
   httpApi:
     authorizers:
       serviceAuthorizer:
@@ -28,9 +48,16 @@ functions:
             method: GET
             path: /test
             authorizer: serviceAuthorizer
+  provision:
+    handler: jit_provisioning.handler
+    runtime: nodejs12.x
+    events:
+      - iot:
+          sql: "SELECT * FROM '$aws/events/certificates/registered/${self:provider.environment.CA_CERT_ID}'"
 
 resources:
   - ${file(resources/cognito.yml)}
+  - ${file(resources/dynamodb.yml)}
   - Resources:
       HttpApi:
         DependsOn: ${file(resources/cognito.yml):serviceUserPool}
