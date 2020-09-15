@@ -11,7 +11,6 @@ exports.handler = function(event, context, callback) {
     
     //Replace it with the AWS region the lambda will be running in
     var region = "us-east-1";
-    
     var accountId = event.awsAccountId.toString().trim();
 
     var iot = new AWS.Iot({'region': region, apiVersion: '2015-05-28'});
@@ -104,10 +103,23 @@ exports.handler = function(event, context, callback) {
                         console.log(err, err.stack);
                         callback(err, data);
                     }
-                    else {
-                        console.log(data);   
-                        callback(null, "Success, created, attached policy and activated the certificate " + certificateId);
-                    }
+                    console.log(data)
+                    /*
+                    Step 5) Attach thing to certificate
+                    */
+                    iot.attachThingPrincipal({
+                        principal: `${certificateARN}`,
+                        thingName: `${certificateId}`
+                    }, (err, data) =>  {
+                        if (err){
+                            console.log(err, err.stack)
+                            callback(err, data)
+                        }
+                        else {
+                            console.log(data);
+                            callback(null, "Success, created, attached policy and activated the certificate " + certificateId);
+                        }
+                    });
                 });
             });
         });

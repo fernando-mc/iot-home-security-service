@@ -49,16 +49,28 @@ functions:
             method: GET
             path: /test
             authorizer: serviceAuthorizer
-  provision:
-    handler: jit_provisioning.handler
-    runtime: nodejs12.x
-    events:
-      - iot:
-          sql: "SELECT * FROM '$aws/events/certificates/registered/${self:provider.environment.CA_CERT_ID}'"
+  # Uncomment the below code to leverage a custom just in time provisioning process
+  # This acts as an alternative to the permissive-provisioning-template.json option
+  # That option also requires the create_and_register_ca_cert.bash file with the
+  # --allow-auto-registration and --registration-config options. This option, uses
+  # a Lambda function handler instead to create policies and things and attach
+  # certificates to those things.
+  # provision:
+  #   handler: jit_provisioning.handler
+  #   runtime: nodejs12.x
+  #   events:
+  #     - iot:
+  #         sql: "SELECT * FROM '$aws/events/certificates/registered/${self:provider.environment.CA_CERT_ID}'"
 
 resources:
   - ${file(resources/cognito.yml)}
   - ${file(resources/dynamodb.yml)}
+  - ${file(resources/iot_provisioning_role.yml)}
   - Resources:
       HttpApi:
         DependsOn: ${file(resources/cognito.yml):serviceUserPool}
+
+package:
+  exclude:
+    - venv/**
+    - manufacturing/**
