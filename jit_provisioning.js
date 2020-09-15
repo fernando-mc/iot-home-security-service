@@ -93,12 +93,23 @@ exports.handler = function(event, context, callback) {
                     console.log(err, err.stack); 
                     callback(err, data);
                 }
-                else {
-                    console.log(data);   
-                    callback(null, "Success, created, attached policy and activated the certificate " + certificateId);
-                }
+                console.log(data);
+                /*
+                Step 4) Create a thing.
+                */
+                iot.createThing({
+                    thingName: certificateId,
+                }, (err, data) => {
+                    if (err) {
+                        console.log(err, err.stack);
+                        callback(err, data);
+                    }
+                    else {
+                        console.log(data);   
+                        callback(null, "Success, created, attached policy and activated the certificate " + certificateId);
+                    }
+                });
             });
         });
     });
- 
 }
