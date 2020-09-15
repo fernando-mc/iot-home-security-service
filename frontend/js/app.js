@@ -2,11 +2,6 @@ $(document).ready(function(){
   $('.ui.dropdown').dropdown();
 });
 
-var base_login_url = "https://service-user-pool-domain-dev-rainbow-unicorn-fppzs.auth.us-east-1.amazoncognito.com/"
-var login_details_client_id = "login?client_id=40t99uorpg0n4jp3f22bsb9usf"
-var login_details_response_type = "&response_type=token&scope=aws.cognito.signin.user.admin+email+openid+phone+profile"
-var redirect_url = "&redirect_uri=http://localhost:8000"
-var login_url = base_login_url + login_details_client_id + login_details_response_type + redirect_url
 var get_votes_endpoint = "https://EXAMPLE_REPLACE_ME.execute-api.us-east-1.amazonaws.com/dev/votes"
 
 function hideLoginButton(){
