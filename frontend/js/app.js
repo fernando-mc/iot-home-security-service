@@ -40,7 +40,10 @@ async function showDeviceAlarmState() {
     requestOptions
   )
     .then(response => response.json())
-    .then(result => document.getElementById('alert_time').innerHTML = new Date(Number(result['state']['reported']['last_alarm'])*1000))
+    .then(result => {
+      console.log(result); 
+      document.getElementById('alert_time').innerHTML = new Date(Number(result['state']['reported']['last_alarm'])*1000);
+    })
     .catch(error => console.log('error', error));
   document.getElementById('hidden_header').style = "";
 }
