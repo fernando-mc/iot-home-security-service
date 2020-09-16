@@ -33,6 +33,7 @@ def handler(event, context):
     state = get_thing_state(thing_name)
     response = {
         "statusCode": 200,
+        "headers": {"Access-Control-Allow-Origin":"*"},
         "body": json.dumps(state)
     }
     return response

@@ -4,7 +4,7 @@ $(document).ready(function(){
 
 let id_token
 let access_token
-var get_votes_endpoint = "https://EXAMPLE_REPLACE_ME.execute-api.us-east-1.amazonaws.com/dev/votes"
+var endpoint = "https://xeazv7wi37.execute-api.us-east-1.amazonaws.com/device/shadow?thing_name=ee9b057feee9e9086d0e5e046b1a831b715743ec1b6766797fb38c6d5f43a62d"
 
 function hideLoginButton(){
   document.getElementsByClassName("ui red button")[0].style.visibility = "hidden"; 
@@ -21,39 +21,17 @@ window.onload = async () => {
   }
 };
 
-async function process_login() {
-  // Get the vote counts
-  const response = await fetch(get_votes_endpoint);
-  const songs = await response.json();
-  // Iterate over all three songs and update the divs
-  var i;
-  for (i = 0; i < songs.length; i++){
-    var featured_songs = ["coderitis", "stateless", "dynamo"];
-    var song = songs[i]
-    if (featured_songs.includes(song["songName"])){
-      console.log(song)
-      setVotes(song["songName"], song["votes"])
-    }
-  }
-}
 
-async function voteForSong(songName) {
-  const response = await fetch(vote_endpoint, {
-    method: "POST",
-    mode: 'cors',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({"songName": songName})
+async function getShadow() {
+  const response = await fetch(endpoint, {
+      method: 'GET',
+      mode: 'cors',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + id_token
+      }
   })
   const result_json = await response.json()
-  setVotes(songName, result_json["votes"])
+  console.log(result_json)
 }
 
-function recordVote() {
-  if (document.getElementsByClassName("item active selected")[0]) {
-    var selectedSong = document.getElementsByClassName("item active selected")[0].getAttribute('data-value')
-    if (selectedSong) {
-      voteForSong(selectedSong)
-      console.log("voted for " + selectedSong)
-    }
-  }
-}
