@@ -2,23 +2,24 @@ $(document).ready(function(){
   $('.ui.dropdown').dropdown();
 });
 
+let id_token
+let access_token
 var get_votes_endpoint = "https://EXAMPLE_REPLACE_ME.execute-api.us-east-1.amazonaws.com/dev/votes"
 
 function hideLoginButton(){
   document.getElementsByClassName("ui red button")[0].style.visibility = "hidden"; 
 }
 
-
 window.onload = async () => {
-  const query = window.location;
+  const query = window.location.href;
   if (query.includes("id_token=") && query.includes("access_token=")) {
     hideLoginButton()
+    id_token = query.match("(?<=id_token=)(.*)(?=&access_token)")[0]
+    access_token = query.match("(?<=access_token=)(.*)(?=&expires_in)")[0]
     window.history.replaceState({}, document.title, "/");
     console.log(query)
   }
 };
-
-
 
 async function process_login() {
   // Get the vote counts
