@@ -39,7 +39,7 @@ async function showDeviceAlarmState() {
     "https://xeazv7wi37.execute-api.us-east-1.amazonaws.com/device/shadow?thing_name=ee9b057feee9e9086d0e5e046b1a831b715743ec1b6766797fb38c6d5f43a62d", 
     requestOptions
   )
-    .then(response => response.text())
+    .then(response => response.json())
     .then(result => document.getElementById('alert_time').innerHTML = new Date(Number(result['state']['reported']['last_alarm'])*1000))
     .catch(error => console.log('error', error));
   document.getElementById('hidden_header').style = "";
