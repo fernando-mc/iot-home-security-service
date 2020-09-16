@@ -40,9 +40,7 @@ async function showDeviceAlarmState() {
     requestOptions
   )
     .then(response => response.text())
-    .then(result => console.log(result))
+    .then(result => document.getElementById('alert_time').innerHTML = result)
     .catch(error => console.log('error', error));
-  document.getElementById('alert_time') = result;
-  document.getElementById("alert_h2").style.visibility = "shown";
+  document.getElementById('hidden_header').style = "";
 }
-
