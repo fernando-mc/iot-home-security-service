@@ -6,12 +6,15 @@ provider:
   runtime: python3.8
   environment:
     DOMAIN_SUFFIX: rainbow-unicorn-fppzs
-    CALLBACK_URL: https://localhost:3000
+    CALLBACK_URL: https://iot-home-security-service.vercel.app/
     DYNAMODB_TABLE: rainbow-unicorn-fppzs
-    CA_CERT_ID: 2e49fc99eb0c4872e61f658745f93db5ef7403d076b32e57534d036e05bdecde
+    # CA_CERT_ID: 2e49fc99eb0c4872e61f658745f93db5ef7403d076b32e57534d036e05bdecde
   iamRoleStatements:
     - Effect: Allow
       Action:
+        - iot:GetThingShadow
+        - iot:UpdateThingShadow
+        - sns:Publish
         - iot:UpdateCertificate
         - iot:CreatePolicy
         - iot:CreateThing
@@ -42,13 +45,19 @@ provider:
           - Ref: serviceUserPoolClient
 
 functions:
-  hello:
-    handler: handler.hello
+  getDeviceShadow:
+    handler: handlers/get_device_shadow.handler
     events:
       - httpApi:
             method: GET
-            path: /test
+            path: /device/shadow
             authorizer: serviceAuthorizer
+  processAlarm:
+    handler: handlers/process_alarm.handler
+    events:
+        - iot:
+            sql: "SELECT message, clientid() AS clientid FROM 'alarms/#'"
+
   # Uncomment the below code to leverage a custom just in time provisioning process
   # This acts as an alternative to the permissive-provisioning-template.json option
   # That option also requires the create_and_register_ca_cert.bash file with the
@@ -56,7 +65,7 @@ functions:
   # a Lambda function handler instead to create policies and things and attach
   # certificates to those things.
   # provision:
-  #   handler: jit_provisioning.handler
+  #   handler: handlers/jit_provisioning.handler
   #   runtime: nodejs12.x
   #   events:
   #     - iot:

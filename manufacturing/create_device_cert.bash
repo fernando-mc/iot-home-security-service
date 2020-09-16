@@ -59,7 +59,7 @@ mosquitto_pub --cafile ./certs/root.cert \
 -p 8883 \
 -q 1 \
 --tls-version tlsv1.2 \
---topic /$device_id/stuff \
+--topic alarms/$device_id \
 --id $device_id \
---message 'hello' \
+--message '{"message": "motion detected"}' \
 --debug
