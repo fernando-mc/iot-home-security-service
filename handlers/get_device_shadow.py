@@ -8,7 +8,7 @@ def get_thing_state(thing_name):
         response = client.get_thing_shadow(thingName=thing_name)
         streamingBody = response["payload"]
         jsonState = json.loads(streamingBody.read())
-        return jsonState["state"]
+        return jsonState
     except ResourceNotFoundException:
         state_data = {
             'state': {

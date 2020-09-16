@@ -21,21 +21,28 @@ window.onload = async () => {
     id_token = query.match("(?<=id_token=)(.*)(?=&access_token)")[0]
     access_token = query.match("(?<=access_token=)(.*)(?=&expires_in)")[0]
     window.history.replaceState({}, document.title, "/");
-    console.log(query)
     showDeviceAlarmState()
   }
 };
 
 async function showDeviceAlarmState() {
-  const response = await fetch(endpoint, {
-      method: 'GET',
-      mode: 'cors',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + id_token
-      }
-  })
-  const result_json = await response.json()
-  console.log(result_json)
-  document.getElementById('alert_time')[0].innerHTML = result_json;
+  var myHeaders = new Headers();
+  myHeaders.append("Authorization", "Bearer " + id_token);
+  
+  var requestOptions = {
+    method: 'GET',
+    headers: myHeaders,
+    redirect: 'follow'
+  };
+  
+  fetch(
+    "https://xeazv7wi37.execute-api.us-east-1.amazonaws.com/device/shadow?thing_name=ee9b057feee9e9086d0e5e046b1a831b715743ec1b6766797fb38c6d5f43a62d", 
+    requestOptions
+  )
+    .then(response => response.text())
+    .then(result => console.log(result))
+    .catch(error => console.log('error', error));
+  document.getElementById('alert_time') = result;
+  document.getElementById("alert_h2").style.visibility = "shown";
 }
+
