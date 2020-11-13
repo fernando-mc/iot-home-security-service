@@ -46,5 +46,6 @@ async function showDeviceAlarmState() {
     })
     .catch(error => console.log('error', error));
   document.getElementById('hidden_header').style = "";
+  document.getElementById('hidden_image').style = "";
 }
 
